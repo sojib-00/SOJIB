@@ -34,7 +34,7 @@ module.exports = {
       const categories = {};
       let msg = "╭───────❁";
 
-      msg += `\n│Apon 𝗛𝗘𝗟𝗣 𝗟𝗜𝗦𝗧\n╰────────────❁`; 
+      msg += `\n│Ĝaa Řa 𝗛𝗘𝗟𝗣 𝗟𝗜𝗦𝗧\n╰────────────❁`; 
 
       for (const [name, value] of commands) {
         if (value.config.role > 1 && role < value.config.role) continue;
@@ -62,9 +62,9 @@ module.exports = {
       const totalCommands = commands.size;
       msg += `\n\n╭─────✰[𝗘𝗡𝗝𝗢𝗬]\n│>𝗧𝗢𝗧𝗔𝗟 𝗖𝗠𝗗𝗦: [${totalCommands}].\n│𝗧𝗬𝗣𝗘𝖳:[ ${prefix}𝗛𝗘𝗟𝗣 \n│.]\n╰────────────✰`;
       msg += ``;
-      msg += `\n╭─────✰\n│ ╣[A P O N]╠\n╰────────────✰`; 
+      msg += `\n╭─────✰\n│ ╣[S A I M ☠️🌪]╠\n╰────────────✰`; 
 
-const helpListImages = [ "https://files.catbox.moe/trmswj.jpg" ];
+const helpListImages = [ "https://i.imgur.com/s6CIKUO.jpeg", ];
 
 
       const helpListImage = helpListImages[Math.floor(Math.random() * helpListImages.length)];
