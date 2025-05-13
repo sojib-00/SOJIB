@@ -1,31 +1,125 @@
+const fs = require("fs-extra");
+const { utils } = global;
+
 module.exports = {
-config: {
-name: "prefix",
-version: "1.0",
-author: "Tokodori_Frtiz",//remodified by cliff
-countDown: 5,
-role: 0,
-shortDescription: "no prefix",
-longDescription: "no prefix",
-category: "auto 🪐",
-},
+  config: {
+    name: "prefix",
+    version: "1.5",
+    author: "NTkhang || Kari Gori By Xos Eren",
+    countDown: 5,
+    role: 0,
+    description: "Change the bot prefix in your chat box or globally (admin only)",
+    category: "⚙️ Configuration",
+    guide: {
+      en:
+        "┌─『 Prefix Settings 』─┐\n"
+      + "│\n"
+      + "│ 🔹 {pn} <prefix>\n"
+      + "│     Set prefix for this chat\n"
+      + "│     Example: {pn} $\n"
+      + "│\n"
+      + "│ 🔹 {pn} <prefix> -g\n"
+      + "│     Set global prefix (Admin only)\n"
+      + "│     Example: {pn} $ -g\n"
+      + "│\n"
+      + "│ ♻️ {pn} reset\n"
+      + "│     Reset to default prefix\n"
+      + "│\n"
+      + "└──────────────────────┘"
+    }
+  },
 
-onStart: async function(){}, 
-onChat: async function({ event, message, getLang }) {
-if (event.body && event.body.toLowerCase() === "prefix") {
-return message.reply({
-body: `
-‣ 𝐆𝐥𝐨𝐛𝐚𝐥 𝐩𝐫𝐞𝐟𝐢𝐱:/ 
-‣𝐘𝐨𝐮𝐫 𝐠𝐫𝐨𝐮𝐩 𝐩𝐫𝐞𝐟𝐢𝐱:/ 
+  langs: {
+    en: {
+      reset:
+        "┌─『 Prefix Reset 』─┐\n"
+      + `│ ✅ Reset to default: %1\n`
+      + "└────────────────────┘",
+      onlyAdmin:
+        "┌─『 Permission Denied 』─┐\n"
+      + "│ ⛔ Only bot admins can change global prefix!\n"
+      + "└──────────────────────────┘",
+      confirmGlobal:
+        "┌─『 Global Prefix Change 』─┐\n"
+      + "│ ⚙️ React to confirm global prefix update.\n"
+      + "└────────────────────────────┘",
+      confirmThisThread:
+        "┌─『 Chat Prefix Change 』─┐\n"
+      + "│ ⚙️ React to confirm this chat's prefix update.\n"
+      + "└──────────────────────────┘",
+      successGlobal:
+        "┌─『 Prefix Updated 』─┐\n"
+      + `│ ✅ Global prefix: %1\n`
+      + "└─────────────────────┘",
+      successThisThread:
+        "┌─『 Prefix Updated 』─┐\n"
+      + `│ ✅ Chat prefix: %1\n`
+      + "└─────────────────────┘",
+      myPrefix:
+        "┌─『 Current Prefix 』─┐\n"
+      + `│ 🌍 Global: %1\n`
+      + `│ 💬 This Chat: %2\n`
+      + "│\n"
+      + `│ ➤ Type: ${2}help\n`
+      + "└─────────────────────┘"
+    }
+  },
 
-‣ 𝐀𝐝𝐦𝐢𝐧 
-‣ 𝐓 𝐀 𝐍 𝐉 𝐈 𝐋
+  onStart: async function ({ message, role, args, commandName, event, threadsData, getLang }) {
+    if (!args[0]) return message.SyntaxError();
 
-‣ 𝐅𝐚𝐜𝐞𝐛𝐨𝐨𝐤 ⓕ
-‣ Ťåñjïł Hāšāń Æßp 
-\n\n\n  `,
-attachment: await global.utils.getStreamFromURL("https://i.imgur.com/WxtBNOq.jpeg")
-});
-}
-}
-}
+    if (args[0] === "reset") {
+      await threadsData.set(event.threadID, null, "data.prefix");
+      return message.reply(getLang("reset", global.GoatBot.config.prefix));
+    }
+
+    const newPrefix = args[0];
+    const formSet = {
+      commandName,
+      author: event.senderID,
+      newPrefix,
+      setGlobal: args[1] === "-g"
+    };
+
+    if (formSet.setGlobal && role < 2) {
+      return message.reply(getLang("onlyAdmin"));
+    }
+
+    const confirmMessage = formSet.setGlobal ? getLang("confirmGlobal") : getLang("confirmThisThread");
+    return message.reply(confirmMessage, (err, info) => {
+      formSet.messageID = info.messageID;
+      global.GoatBot.onReaction.set(info.messageID, formSet);
+    });
+  },
+
+  onReaction: async function ({ message, threadsData, event, Reaction, getLang }) {
+    const { author, newPrefix, setGlobal } = Reaction;
+    if (event.userID !== author) return;
+
+    if (setGlobal) {
+      global.GoatBot.config.prefix = newPrefix;
+      fs.writeFileSync(global.client.dirConfig, JSON.stringify(global.GoatBot.config, null, 2));
+      return message.reply(getLang("successGlobal", newPrefix));
+    }
+
+    await threadsData.set(event.threadID, newPrefix, "data.prefix");
+    return message.reply(getLang("successThisThread", newPrefix));
+  },
+
+  onChat: async function ({ event, message, threadsData }) {
+    const globalPrefix = global.GoatBot.config.prefix;
+    const threadPrefix = await threadsData.get(event.threadID, "data.prefix") || globalPrefix;
+
+    if (event.body && event.body.toLowerCase() === "prefix") {
+      return message.reply({
+        body:
+          "╔══『 𝐏𝐑𝐄𝐅𝐈𝐗 』══╗\n"
+        + `║ 🌍 System : ${globalPrefix}\n`
+        + `║ 💬 Chatbox : ${threadPrefix}\n`
+        + `║ ➤ ${threadPrefix}help to see all available cmds 😘\n`
+        + "╚═══════════════╝",
+        attachment: await utils.getStreamFromURL(" https://files.catbox.moe/27or5a.jpg")
+      });
+    }
+  }
+};
