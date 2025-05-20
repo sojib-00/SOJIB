@@ -1,11 +1,12 @@
 const fs = require("fs-extra");
+const moment = require("moment-timezone");
 const { utils } = global;
 
 module.exports = {
   config: {
     name: "prefix",
     version: "1.5",
-    author: "NTkhang || Kari Gori By Xos Eren",
+    author: "Ew'r Saim",
     countDown: 5,
     role: 0,
     description: "Change the bot prefix in your chat box or globally (admin only)",
@@ -111,14 +112,30 @@ module.exports = {
     const threadPrefix = await threadsData.get(event.threadID, "data.prefix") || globalPrefix;
 
     if (event.body && event.body.toLowerCase() === "prefix") {
+      const currentTime = moment().tz("Asia/Dhaka").format("hh:mm A");
+      const uptimeMs = process.uptime() * 1000;
+
+      function formatUptime(ms) {
+        const sec = Math.floor(ms / 1000) % 60;
+        const min = Math.floor(ms / (1000 * 60)) % 60;
+        const hr = Math.floor(ms / (1000 * 60 * 60));
+        return `${hr}h ${min}m ${sec}s`;
+      }
+
+      const uptime = formatUptime(uptimeMs);
+
       return message.reply({
         body:
-          "╔══『 𝐏𝐑𝐄𝐅𝐈𝐗 』══╗\n"
-        + `║ 🌍 System : ${globalPrefix}\n`
-        + `║ 💬 Chatbox : ${threadPrefix}\n`
-        + `║ ➤ ${threadPrefix}help to see all available cmds 😘\n`
-        + "╚═══════════════╝",
-        attachment: await utils.getStreamFromURL(" https://files.catbox.moe/27or5a.jpg")
+`➤➤➤ 𝗣𝗥𝗘𝗙𝗜𝗫 𝗜𝗡𝗙𝗢 ➤➤➤
+➤ 🌍 Global: ${globalPrefix}
+➤ 💬 Chat: ${threadPrefix}
+➤ 📘 Help: ${threadPrefix}help
+➤ ⏰ Time: ${currentTime}
+➤ ⏳ Uptime: ${uptime}
+➤ 👤 Your ID: ${event.senderID}
+➤ ✍️ Dev: Ew'r Saim
+➤➤➤➤➤➤➤➤➤➤➤➤➤`,
+        attachment: await utils.getStreamFromURL("https://files.catbox.moe/27or5a.jpg")
       });
     }
   }
