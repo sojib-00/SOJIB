@@ -1,60 +1,57 @@
 const axios = require('axios');
+const fs = require('fs-extra');
+const path = require('path');
 
 module.exports = {
-	config: {
-		name: "waifu",
-		aliases: ["wife"],
-		version: "1.0",
-		author: "tas3n",
-		countDown: 6,
-		role: 0,
-		shortDescription: "get random waifu",
-		longDescription: "Get waifu neko: waifu, neko, shinobu, megumin, bully, cuddle, cry, kiss, lick, hug, awoo, pat, smug, bonk, yeet, blush, smile, wave, highfive, handhold, nom, bite, glomp, slap, kill, kick, happy, wink, poke, dance, cringe",
-		category: "anime",
-		guide: "{pn} {{<name>}}"
-	},
+  config: {
+    name: "waifu",
+    aliases: ["animegirl", "bestgirl"],
+    version: "1.0",
+    author: "Saim / owner Saim",
+    countDown: 5,
+    role: 0,
+    shortDescription: {
+      en: "Random anime waifu pathao"
+    },
+    longDescription: {
+      en: "Ekta cute anime waifu er image user ke pathay"
+    },
+    category: "FUN",
+    guide: "{pn}"
+  },
 
-	onStart: async function ({ message, args }) {
-		const name = args.join(" ");
-		if (!name)
+  onStart: async function ({ api, event }) {
+    const { threadID, messageID } = event;
 
-			try {
-				let res = await axios.get(`https://api.waifu.pics/sfw/waifu`)
+    const cachePath = path.join(__dirname, 'cache');
+    const fileName = `waifu_${Date.now()}.jpg`;
+    const filePath = path.join(cachePath, fileName);
 
+    try {
+      await fs.ensureDir(cachePath);
 
-				let res2 = res.data
-				let img = res2.url
+      // Waifu image er ekta link ney
+      const waifuAPI = await axios.get("https://api.waifu.pics/sfw/waifu");
+      const imageUrl = waifuAPI.data.url;
 
-				const form = {
-					body: `   「 𝔀𝓪𝓲𝓯𝓾  」   `
+      // Image ta download kore
+      const imageData = await axios.get(imageUrl, { responseType: "arraybuffer" });
+      fs.writeFileSync(filePath, imageData.data);
 
-				};
-				if (img)
-					form.attachment = await global.utils.getStreamFromURL(img);
-				message.reply(form);
-			} catch (e) {
-				message.reply(` Not Found`)
-			}
+      // Stylish text
+      const stylishText = `
+✨ 𝒀𝒐𝒖𝒓 𝒓𝒂𝒏𝒅𝒐𝒎 𝒂𝒏𝒊𝒎𝒆 𝒘𝒂𝒊𝒇𝒖 𝒊𝒔 𝒉𝒆𝒓𝒆! ✨
 
+~ ᴏᴡɴᴇʀ Sᴀɪᴍ`;
 
-		else {
+      api.sendMessage({
+        body: stylishText,
+        attachment: fs.createReadStream(filePath)
+      }, threadID, () => fs.unlinkSync(filePath), messageID);
 
-			try {
-				let res = await axios.get(`https://api.waifu.pics/sfw/${name}`)
-
-
-				let res2 = res.data
-				let img1 = res2.url
-
-				const form = {
-					body: `   「 𝔀𝓪𝓲𝓯𝓾  」   `
-
-				};
-				if (img1)
-					form.attachment = await global.utils.getStreamFromURL(img1);
-				message.reply(form);
-			} catch (e) { message.reply(` No waifu  \category: waifu, neko, shinobu, megumin, bully, cuddle, cry, kiss, lick, hug, awoo, pat, smug, bonk, yeet, blush, smile, wave, highfive, handhold, nom, bite, glomp, slap, kill, kick, happy, wink, poke, dance, cringe `) }
-
-		}
-	}
+    } catch (error) {
+      console.error("Waifu command e problem:", error);
+      api.sendMessage("Sorry, waifu pathate parchi na ekhon.", threadID, messageID);
+    }
+  }
 };
