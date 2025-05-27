@@ -23,7 +23,7 @@ module.exports = {
     longDescription: {
       en: "Get 4 visually different images from Pollinations using prompt variation"
     },
-    category: "IMAGE",
+    category: "𝗜𝗠𝗔𝗚𝗘 𝗚𝗘𝗡𝗘𝗥𝗔𝗧𝗢𝗥",
     guide: "{pn} your prompt",
   },
 
