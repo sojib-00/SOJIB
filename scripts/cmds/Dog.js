@@ -1,59 +1,44 @@
-const axios = require('axios');
-const fs = require('fs-extra');
-const path = require('path');
+const DIG = require("discord-image-generation");
+const fs = require("fs-extra");
 
 module.exports = {
   config: {
-    name: "dog",
-    aliases: ["puppy", "bark"],
-    version: "1.0",
-    author: "Saim / owner Saim",
+    name: "wanted",
+    aliases:["wan"],
+    version: "1.1",
+    author: "NTKhang",
     countDown: 5,
     role: 0,
-    shortDescription: {
-      en: "Random dog image pathao"
-    },
-    longDescription: {
-      en: "Ekta cute random dog er image user ke pathay"
-    },
+    shortDescription: "wanted image",
+    longDescription: "wanted image",
     category: "FUN",
-    guide: "{pn}"
+    guide: {
+      en: "{pn} @tag"
+    }
   },
 
-  onStart: async function ({ api, event }) {
-    const { threadID, messageID } = event;
-
-    const cachePath = path.join(__dirname, 'cache');
-    const fileName = `dog_${Date.now()}.jpg`;
-    const filePath = path.join(cachePath, fileName);
-
-    try {
-      // Cache folder check + create
-      await fs.ensureDir(cachePath);
-
-      // Dog image er ekta random link ney
-      const dogAPI = await axios.get("https://dog.ceo/api/breeds/image/random");
-      const imageUrl = dogAPI.data.message;
-
-      // Image ta download kore
-      const imageData = await axios.get(imageUrl, { responseType: "arraybuffer" });
-      fs.writeFileSync(filePath, imageData.data);
-
-      // Stylish font diye text
-      const stylishText = `
-🐶 𝑬𝒌𝒕𝒂 𝒄𝓾𝓽𝒆 𝒅𝓸𝓰 𝒕𝓸𝒎𝒂𝒓 𝒋𝒐𝒏𝒏𝒐! 🦴
-
-~ ᴏᴡɴᴇʀ Sᴀɪᴍ`;
-
-      // Image user ke pathay
-      api.sendMessage({
-        body: stylishText,
-        attachment: fs.createReadStream(filePath)
-      }, threadID, () => fs.unlinkSync(filePath), messageID);
-
-    } catch (error) {
-      console.error("Dog command e problem:", error);
-      api.sendMessage("Sorry, ekhon dog image pathate parchi na.", threadID, messageID);
+  langs: {
+    vi: {
+      noTag: "Bạn phải tag người bạn muốn nhấn tay vào trán"
+    },
+    en: {
+      noTag: "You must tag the person you want to wanted"
     }
+  },
+
+  onStart: async function ({ event, message, usersData, args, getLang }) {
+    const uid1 = event.senderID;
+    const uid2 = Object.keys(event.mentions)[0];
+    if (!uid2)
+      return message.reply(getLang("noTag"));
+    const avatarURL2 = await usersData.getAvatarUrl(uid2);
+    const img = await new DIG.Wanted().getImage(avatarURL2);
+    const pathSave = `${__dirname}/tmp/${uid2}_Wanted.png`;
+    fs.writeFileSync(pathSave, Buffer.from(img));
+    const content = args.join(' ').replace(Object.keys(event.mentions)[0], "");
+    message.reply({
+      body: `${(content || "wanted moment!")} yawa`,
+      attachment: fs.createReadStream(pathSave)
+    }, () => fs.unlinkSync(pathSave));
   }
 };
