@@ -11,7 +11,7 @@ module.exports = {
     role: 0,
     shortDescription: "wanted image",
     longDescription: "wanted image",
-    category: "FUN",
+    category: "fun",
     guide: {
       en: "{pn} @tag"
     }
