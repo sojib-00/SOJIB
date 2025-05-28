@@ -10,7 +10,7 @@ module.exports = {
 		role: 0,
 		shortDescription: "Batslap image",
 		longDescription: "Batslap image",
-		category: "image",
+		category: "fun",
 		guide: {
 			en: "   {pn} @tag"
 		}
