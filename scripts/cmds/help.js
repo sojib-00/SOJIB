@@ -29,13 +29,13 @@ module.exports = {
     const prefix = getPrefix(threadID);
 
     if (args.length === 0) {
+      // Full command list with custom style
       const categories = {};
-      let msg = "╔════════════ ∘◦ ✿ ◦∘ ════════════╗";
-      msg += `\n               ʜᴇʟᴘ ᴍᴇɴᴜ`;
-      msg += `\n╚════════════ ∘◦ ❀ ◦∘ ════════════╝\n`;
+      let msg = "☻︎━━━━━━━━━━━━━━☻︎\n";
+      msg += "           ℍ𝕖𝕝𝕡 𝕄𝕖𝕟𝕦\n";
+      msg += "☺︎︎━━━━━━━━━━━━━━㋛︎\n";
 
       for (const [name, value] of commands) {
-        // ✅ Filter: Skip invalid or broken commands
         if (!value?.config || typeof value.onStart !== "function") continue;
         if (value.config.role > 1 && role < value.config.role) continue;
 
@@ -44,27 +44,23 @@ module.exports = {
         categories[category].commands.push(name);
       }
 
-      Object.keys(categories).forEach((category) => {
+      for (const category of Object.keys(categories).sort()) {
         if (category !== "info") {
-          msg += `\n\n❖═════『  ${category.toUpperCase()} 』═════❖`;
+          msg += `┍━[  ${category.toUpperCase()} ]\n`;
           const names = categories[category].commands.sort();
-          for (let i = 0; i < names.length; i += 3) {
-            const cmds = names
-              .slice(i, i + 3)
-              .map((item) => `➤ ${stylizeSmallCaps(item)}`);
-            msg += `\n${cmds.join("     ")}`;
+          for (const cmd of names) {
+            msg += `┋☄${cmd}\n`;
           }
+          msg += "┕━━━━━━━━━━━━━☻︎\n";
         }
-      });
+      }
 
-      msg += `\n\n╔═━「 ᴛᴏᴛᴀʟ ᴄᴏᴍᴍᴀɴᴅꜱ 」━═╗`;
-      msg += `\n➤ Total: ${commands.size}`;
-      msg += `\n➤ Use: ${prefix}help <command>`;
-      msg += `\n╚═━──────────────━═╝`;
-
-      msg += `\n\n╭─────⊹⊱✫⊰⊹─────╮`;
-      msg += `\n       ᴅᴇᴠ: ꜱ ᴀ ɪ ᴍ`;
-      msg += `\n╰─────⊹⊱✫⊰⊹─────╯`;
+      // Info footer
+      msg += "┍━━━[𝙸𝙽𝙵𝚁𝙾𝙼]━━━☹︎\n";
+      msg += `┋➥𝚃𝙾𝚃𝙰𝙻𝙲𝙼𝙳: [${commands.size}]\n`;
+      msg += `┋➥𝙿𝚁𝙴𝙵𝙸𝚇: ${prefix}\n`;
+      msg += `┋𝙾𝚆𝙽𝙴𝚁: Ew'r Saim\n`;
+      msg += "┕━━━━━━━━━━━━☹︎";
 
       const helpListImages = ["https://files.catbox.moe/9f7p0a.jpg"];
       const helpListImage = helpListImages[Math.floor(Math.random() * helpListImages.length)];
@@ -75,6 +71,7 @@ module.exports = {
       });
 
     } else {
+      // Detailed help for specific command
       const commandName = args[0].toLowerCase();
       const command = commands.get(commandName) || commands.get(aliases.get(commandName));
 
@@ -131,4 +128,4 @@ function roleTextToString(roleText) {
     default:
       return "Unknown role";
   }
-            }
+    }
