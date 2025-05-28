@@ -1,28 +1,67 @@
+const axios = require("axios");
+const fs = require("fs");
+const path = require("path");
+
 module.exports = {
   config: {
     name: "uptime",
-    aliases: ["up", "upt"],
-    version: "1.0",
-    author: "VEX_ADNAN",
+    aliases: ["up", "goatuptime"],
+    version: "4.1",
+    author: "S A I M",
     role: 0,
     shortDescription: {
-      en: "Displays the uptime of the bot."
+      en: "GOAT-style uptime with image and signature"
     },
     longDescription: {
-      en: "Displays the amount of time that the bot has been running for."
+      en: "Displays uptime in a boss-level style with image and owner signature."
     },
-    category: "System",
+    category: "system",
     guide: {
-      en: "Use {p}uptime to display the uptime of the bot."
+      en: "{p}uptime"
     }
   },
-  onStart: async function ({ api, event, args }) {
+
+  onStart: async function ({ api, event }) {
     const uptime = process.uptime();
     const seconds = Math.floor(uptime % 60);
     const minutes = Math.floor((uptime / 60) % 60);
-    const hours = Math.floor((uptime / (60 * 60)) % 24);
-    const days = Math.floor(uptime / (60 * 60 * 24));
-    const uptimeString = `\n\nl ꙰ → ${hours} ʜᴏᴜʀs\n\nl ꙰ → ${minutes} ᴍɪɴᴜᴛᴇs\n\nl ꙰ → ${seconds} sᴇᴄᴏɴᴅ\n\n✧─────────────────✧`;
-    api.sendMessage(`✧─────────────────✧\n\n💥 ʜᴇʟʟᴏ ᴍᴇɪsᴛᴇʀ, ᴛʜᴇ ʙᴏᴛ ʜᴀs ʙᴇᴇɴ ʀᴜɴɴɪɴɢ ғᴏʀ ↓\n↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ ${uptimeString}`, event.threadID);
+    const hours = Math.floor((uptime / 3600) % 24);
+    const days = Math.floor(uptime / (3600 * 24));
+
+    const msg = `
+⚡👑 𝗚𝗢𝗔𝗧 𝗨𝗣𝗧𝗜𝗠𝗘 𝗥𝗘𝗣𝗢𝗥𝗧 👑⚡
+
+⏱ Days   : ${days}
+⏱ Hours  : ${hours}
+⏱ Mins   : ${minutes}
+⏱ Secs   : ${seconds}
+
+🔥 STATUS: UNSTOPPABLE
+💀 Downtime? NEVER HEARD OF IT.
+
+───────────────
+✒️ 𝗢𝗪𝗡𝗘𝗥: 𝗦 𝗔 𝗜 𝗠
+───────────────`;
+
+    // Using the same image as help command
+    const imageUrl = "https://files.catbox.moe/9f7p0a.jpg";
+    const imagePath = path.join(__dirname, "uptime_goat.jpg");
+
+    const response = await axios.get(imageUrl, { responseType: "stream" });
+    const writer = fs.createWriteStream(imagePath);
+
+    response.data.pipe(writer);
+
+    writer.on("finish", () => {
+      api.sendMessage({
+        body: msg,
+        attachment: fs.createReadStream(imagePath)
+      }, event.threadID, () => fs.unlinkSync(imagePath));
+    });
+
+    writer.on("error", (err) => {
+      console.error("Image download failed:", err);
+      api.sendMessage(msg, event.threadID);
+    });
   }
 };
