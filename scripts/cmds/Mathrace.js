@@ -14,7 +14,7 @@ countDown: 0,
 
 role: 0,
 
-category: "game | গেম",
+category: "game",
 
 guide: "{p}mathrace",
 
