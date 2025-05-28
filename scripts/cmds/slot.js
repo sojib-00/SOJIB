@@ -9,7 +9,7 @@ module.exports = {
     longDescription: {
       en: "Slot game.",
     },
-    category: "Game",
+    category: "game",
   },
   langs: {
     en: {
