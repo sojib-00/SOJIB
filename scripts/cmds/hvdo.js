@@ -8,7 +8,7 @@ module.exports = {
 		role: 2,
 		shortDescription: "get hentai video",
 		longDescription: "it will send hentai  video",
-		category: "𝟭𝟴+",
+		category: "18+",
 		guide: "{p}{n}hvdo",
 	},
 
