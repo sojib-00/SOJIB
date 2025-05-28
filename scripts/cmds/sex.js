@@ -7,7 +7,7 @@ module.exports = {
     role: 0,
     shortDescription: "all video ðŸ“·",
     longDescription: "",
-    category: "Video",
+    category: "18+",
     guide: "{pn}"
   },
    onStart: async function ({ message }) {
