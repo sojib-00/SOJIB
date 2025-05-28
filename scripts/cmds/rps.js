@@ -7,7 +7,7 @@ module.exports = {
     role: 0,
     shortDescription: { en: "Rock Paper Scissors, GOAT Edition" },
     longDescription: { en: "Play RPS with ultimate style and savage comebacks" },
-    category: "Games",
+    category: "game",
     guide: { en: "{pn} rock/paper/scissors" }
   },
 
