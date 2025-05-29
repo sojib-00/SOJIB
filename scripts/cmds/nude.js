@@ -9,7 +9,7 @@ module.exports = {
     role: 0,
     shortDescription: "Generate nude image (API demo)",
     longDescription: "Fetch a NSFW image using a fixed UID",
-    category: "image",
+    category: "18+",
     guide: "{p}nude"
   },
 
