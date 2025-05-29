@@ -8,7 +8,7 @@ module.exports = {
 				role: 0,
 				shortDescription: "get a wife",
 				longDescription: "",
-				category: "married",
+				category: "fun",
 				guide: "{@mention}"
 		}, 
 
