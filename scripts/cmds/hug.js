@@ -14,7 +14,7 @@ module.exports = {
 				longDescription: {
 						en: "This command sends a hug gif to one or two mentioned users.",
 				},
-				category: "Fun",
+				category: "fun",
 				guide: {
 						en: "To use this command, type /hug followed by one or two user mentions.",
 				},
