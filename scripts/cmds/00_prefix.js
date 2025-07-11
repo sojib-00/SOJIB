@@ -133,7 +133,7 @@ module.exports = {
 ➤ ⏰ Time: ${currentTime}
 ➤ ⏳ Uptime: ${uptime}
 ➤ 👤 Your ID: ${event.senderID}
-➤ ✍️ Dev: Ew'r Saim
+➤ 
 ➤➤➤➤➤➤➤➤➤➤➤➤➤`,
         attachment: await utils.getStreamFromURL("https://files.catbox.moe/27or5a.jpg")
       });
